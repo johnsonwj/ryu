@@ -1,0 +1,36 @@
+cabal-version:       2.4
+name:                ryu
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:             https://github.com/githubuser/ryu#readme
+license:              GPL-3.0-or-later
+license-file:         LICENSE
+author:               Will Johnson
+maintainer:           maintainer@willj.dev
+copyright:            2019 Will Johnson
+category:             Text
+build-type:           Simple
+extra-source-files:   README.md
+
+common build-opts
+  default-language:   Haskell2010
+  default-extensions: 
+  ghc-options:        -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+
+library
+  import:             build-opts
+  hs-source-dirs:     src
+  build-depends:      base, text, template-haskell, binary, bytestring
+  exposed-modules:    Text.Format.Floating.Ryu, Text.Format.Floating.Simple
+  other-modules:      Text.Format.Floating.Ryu.Tables, Text.Format.Floating.Ryu.TableQuoter
+
+
+test-suite tests
+  import:               build-opts
+  type:                 exitcode-stdio-1.0
+  main-is:              Spec.hs
+  hs-source-dirs:       test
+  build-depends:        base, hspec, ryu
+  build-tool-depends:   hspec-discover:hspec-discover
+  other-modules:        
