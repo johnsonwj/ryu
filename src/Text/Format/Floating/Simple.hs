@@ -22,22 +22,10 @@ formatSci = undefined
 --   such that a = m10 * 10 ^ e10.
 convertToDecimal :: (RealFloat a) => a -> (Integer, Int)
 convertToDecimal a
+    | isInfinite a                  = undefined --  if signum a < 0 then ('-' :)
     | floatRadix a == 10            = decodeFloat a
     | floatRadix a == 2 && isIEEE a = uncurry ieeeBinToDecimal (decodeFloat a)
     | otherwise                     = error "we only support IEEE floats with radix 2"
 
 ieeeBinToDecimal :: Integer -> Int -> (Integer, Int)
 ieeeBinToDecimal m2 e2 = undefined
-
-showBits :: forall a. (FiniteBits a) => a -> String
-showBits = doShowBits 0 where
-
-    doShowBits i x
-        | i >= finiteBitSize x  = []
-        | otherwise             = showBit x i' : doShowBits (i + 1) x
-        where i' = finiteBitSize x - (1 + i)
-
-    showBit :: (FiniteBits b) => b -> Int -> Char
-    showBit b i
-        | testBit b i   = '1'
-        | otherwise     = '0'

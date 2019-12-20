@@ -22,7 +22,7 @@ library
   import:             build-opts
   hs-source-dirs:     src
   build-depends:      base, text, template-haskell, binary, bytestring
-  exposed-modules:    Text.Format.Floating.Ryu, Text.Format.Floating.Simple
+  exposed-modules:    Text.Format.Floating.Ryu, Text.Format.Floating.Simple, Text.Format.Floating.IEEE
   other-modules:      Text.Format.Floating.Ryu.Tables, Text.Format.Floating.Ryu.TableQuoter
 
 
