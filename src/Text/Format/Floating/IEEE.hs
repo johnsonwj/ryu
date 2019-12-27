@@ -1,16 +1,24 @@
 {-# LANGUAGE GeneralisedNewtypeDeriving, ScopedTypeVariables #-}
 
 module Text.Format.Floating.IEEE
-    ( IEEEFloat(..)
-    , IEEEComponents(..)
-    , Sign, signValue
-    , Exponent, exponentValue
-    , Mantissa, mantissaValue
-    , showBits
-    ) where
+  ( IEEEFloat(..)
+  , IEEEComponents(..)
+  , Sign
+  , signValue
+  , Exponent
+  , exponentValue
+  , Mantissa
+  , mantissaValue
+  , showBits
+  )
+where
 
-import Data.Bits
-import GHC.Float (castFloatToWord32, castDoubleToWord64)
+import           Text.Format.Floating.IEEE.Constants
+
+import           Data.Bits
+import           GHC.Float                      ( castFloatToWord32
+                                                , castDoubleToWord64
+                                                )
 
 class RealFloat a => IEEEFloat a where
     ieeeDecodeFloat :: a -> IEEEComponents a
@@ -20,35 +28,31 @@ class RealFloat a => IEEEFloat a where
     ieeeExponentLength :: a -> Integer
     ieeeMantissaLength :: a -> Integer
 
-float32Bias, float32ExponentLength, float32MantissaLength:: Integer
-float32Bias = 127
-float32ExponentLength = 8
-float32MantissaLength = 23
-
 instance IEEEFloat Float where
-    ieeeDecodeFloat x = unsafeDecodeFloat (toInteger $ castFloatToWord32 x) float32ExponentLength float32MantissaLength
-    ieeeFloatBias = const float32Bias
-    ieeeExponentLength = const float32ExponentLength
-    ieeeMantissaLength = const float32MantissaLength
-
-float64Bias, float64ExponentLength, float64MantissaLength :: Integer
-float64Bias = 1023
-float64ExponentLength = 11
-float64MantissaLength = 52
+  ieeeDecodeFloat x = unsafeDecodeFloat (toInteger $ castFloatToWord32 x)
+                                        float32ExponentLength
+                                        float32MantissaLength
+  ieeeFloatBias      = const float32Bias
+  ieeeExponentLength = const float32ExponentLength
+  ieeeMantissaLength = const float32MantissaLength
 
 instance IEEEFloat Double where
-    ieeeDecodeFloat x = unsafeDecodeFloat (toInteger $ castDoubleToWord64 x) float64ExponentLength float64MantissaLength
-    ieeeFloatBias = const float64Bias
-    ieeeExponentLength = const float64ExponentLength
-    ieeeMantissaLength = const float64MantissaLength
+  ieeeDecodeFloat x = unsafeDecodeFloat (toInteger $ castDoubleToWord64 x)
+                                        float64ExponentLength
+                                        float64MantissaLength
+  ieeeFloatBias      = const float64Bias
+  ieeeExponentLength = const float64ExponentLength
+  ieeeMantissaLength = const float64MantissaLength
 
 unsafeDecodeFloat :: Integer -> Integer -> Integer -> IEEEComponents a
-unsafeDecodeFloat bits es ms = IEEEComponents (Sign s) (Exponent e) (Mantissa m) where
-    ms' = fromInteger ms
-    es' = fromInteger es
-    m = maskRange 0 ms' .&. bits
-    e = rotateR (maskRange ms' es' .&. bits) ms'
-    s = testBit bits (ms' + es')
+unsafeDecodeFloat bits es ms = IEEEComponents (Sign s)
+                                              (Exponent e)
+                                              (Mantissa m) where
+  ms' = fromInteger ms
+  es' = fromInteger es
+  m   = maskRange 0 ms' .&. bits
+  e   = rotateR (maskRange ms' es' .&. bits) ms'
+  s   = testBit bits (ms' + es')
 
 -- | @mantissaMask l s@ is an 'Integer' mask for the @s@ consecutive bits starting
 --   at index @l@. For example: @mantissaMask 4 6 == 0b0001111110000@.
@@ -59,7 +63,7 @@ maskRange l s = bit (l + s - 1) .|. maskRange l (s - 1)
 data IEEEComponents a = IEEEComponents
     { ieeeSign      :: Sign a
     , ieeeExponent  :: Exponent a
-    , ieeeMantissa  :: Mantissa a 
+    , ieeeMantissa  :: Mantissa a
     } deriving (Eq, Show)
 
 -- | This type carries a 'Bool' representing the sign bit of an IEEE floating-point number.
@@ -84,7 +88,7 @@ newtype Exponent a = Exponent { exponentValue :: Integer } deriving (Eq, Bits, S
 instance IEEEFloat a => FiniteBits (Exponent a) where
 
     -- | This implementation does not evaluate its argument.
-    finiteBitSize _ = fromInteger $ ieeeExponentLength (undefined :: a)
+  finiteBitSize _ = fromInteger $ ieeeExponentLength (undefined :: a)
 
 -- | This type carries an arbitrary-precision integer representing the mantissa of an IEEE
 --   floating-point number, interpreted directly as an integer. For example:
@@ -107,11 +111,10 @@ instance IEEEFloat a => FiniteBits (Mantissa a) where
     --   implicit bit (which Haskell's floatDigits does include).
     --
     --   This implementation does not evaluate its argument.
-    finiteBitSize _ = fromInteger $ ieeeMantissaLength (undefined :: a)
+  finiteBitSize _ = fromInteger $ ieeeMantissaLength (undefined :: a)
 
 showBits :: (FiniteBits b) => b -> String
 showBits b = reverse (buildBitsString 0) where
-    buildBitsString i
-        | i >= finiteBitSize b  = []
-        | otherwise             = bitChar i : buildBitsString (i + 1)
-    bitChar i = if testBit b i then '1' else '0'
+  buildBitsString i | i >= finiteBitSize b = []
+                    | otherwise            = bitChar i : buildBitsString (i + 1)
+  bitChar i = if testBit b i then '1' else '0'
