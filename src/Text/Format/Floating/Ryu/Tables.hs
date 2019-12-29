@@ -1,20 +1,10 @@
-{-# LANGUAGE TemplateHaskellQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
 module Text.Format.Floating.Ryu.Tables where
 
-import Language.Haskell.TH
-import Language.Haskell.TH.Quote (QuasiQuoter(..))
+import           Text.Format.Floating.Ryu.Tables.TH
+import Text.Format.Floating.Constants
+import Text.Format.Floating.Ryu.Tables.Formulas
 
-lookupTable :: QuasiQuoter
-lookupTable = QuasiQuoter
-    { quoteExp  = decOnly
-    , quotePat  = decOnly
-    , quoteType = decOnly
-    , quoteDec  = generateLookupTableDec
-    }
-    where
-        decOnly = fail "lookup table quoter is only valid as a top-level declaration"
+makeLookupTable "floatTable" (multiplierTable (undefined :: Float) ryuFloatB0 ryuFloatB1)
 
-generateLookupTableDec :: String -> Q [Dec]
-generateLookupTableDec = undefined
-
-
+makeLookupTable "doubleTable" (multiplierTable (undefined :: Double) ryuDoubleB0 ryuDoubleB1)
