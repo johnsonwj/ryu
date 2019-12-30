@@ -6,7 +6,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Char (intToDigit)
 
--- | 'True' is negative, 'False' is positive; just like the sign bit in an IEEE float
+-- | 'True' is negative, 'False' is positive; just like the sign bit in an IEEE float.
 type SignBit = Bool
 
 data DecimalFloat
@@ -38,9 +38,9 @@ renderDecimalSci = doRender normalRenderSci where
     e'        = e + fromIntegral (T.length dt)
     es        = if e' < 0 then "-" else "+"
 
-type NormalRenderer = SignBit -> Integer -> Integer -> Text
+type NonsingularRenderer = SignBit -> Integer -> Integer -> Text
 
-doRender :: NormalRenderer -> DecimalFloat -> Text
+doRender :: NonsingularRenderer -> DecimalFloat -> Text
 doRender _ (DecimalNaN _)           = "NaN"
 doRender _ (DecimalInfinity True)   = "-Infinity"
 doRender _ (DecimalInfinity False)  = "Infinity"
@@ -58,3 +58,21 @@ renderSignedDecimalInteger s x = addSign (renderAbs x) where
     in if q > 0
       then T.snoc (renderAbs q) rc
       else T.singleton rc
+
+shortestDecimalRep :: Integer -> Integer -> Integer -> Bool -> Bool -> Bool -> (Integer, Integer)
+shortestDecimalRep a0 b0 c0 acceptSmaller acceptLarger breakTieDown
+    = go True True a0 b0 (if acceptLarger then c0 else c0 - 1) 0  where
+        go az bz a b c i =
+            let a'            = a `div` 10
+                b'            = b `div` 10
+                c'            = c `div` 10
+                digit         = b `mod` 10
+                adz           = a `mod` 10 == 0
+                az'           = az && adz
+                bz'           = bz && (digit == 0)
+                isTie         = digit == 5 && bz
+                wantRoundDown = digit < 5 || (isTie && breakTieDown)
+                roundDown     = (wantRoundDown && (a /= b || az)) || b + 1 > c
+            in  if a' < c' || (acceptSmaller && az')
+                then go az' bz' a' b' c' (i + 1)
+                else (if roundDown then b else b + 1, i)

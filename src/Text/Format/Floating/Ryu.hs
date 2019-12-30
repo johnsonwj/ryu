@@ -1,34 +1,36 @@
 module Text.Format.Floating.Ryu where
 
 import Text.Format.Floating.Decimal
-import Text.Format.Floating.Constants
+import Text.Format.Floating.Ryu.Tables
+import Text.Format.Floating.Rounding
 
-import           Data.Text                      ( Text )
+import Data.Text (Text)
 
 formatDec :: (RyuFloat a) => a -> Text
-formatDec = renderDecimal . rebaseDecimal
+formatDec = formatDec' RoundEven
+
+formatDec' :: (RyuFloat a) => RoundingMode -> a -> Text
+formatDec' rm x = renderDecimal (rebaseDecimal x rm)
 
 -- | This always uses a lowercase @e@ in the output. Compose with 'Data.Text.toUpper'
 --   if uppercase output is desired.
 formatSci :: (RyuFloat a) => a -> Text
-formatSci = renderDecimalSci . rebaseDecimal
+formatSci = formatSci' RoundEven
+
+formatSci' :: (RyuFloat a) => RoundingMode -> a -> Text
+formatSci' rm x = renderDecimalSci (rebaseDecimal x rm)
 
 class RealFloat a => RyuFloat a where
-  -- | These represent the number of bits needed to store the multipliers used by
-  --   the algorithm; see Section 3.2.4 in Adams' original paper for more information
-  --   on how they were derived. Note that implementations should not actually
+  -- | Note that implementations should not actually
   --   evaluate their argument; they are just used for the benefit of the type checker,
   --   in the same vein as Haskell's 'floatDigits' etc.
-  ryuB0 :: a -> Integer
-  ryuB1 :: a -> Integer
+  ryuMultiplier :: a -> Integer
 
 instance RyuFloat Float where
-  ryuB0 = const ryuFloatB0
-  ryuB1 = const ryuFloatB1
+  ryuMultiplier x = floatTable (toInteger e2) where e2 = snd (decodeFloat x) - 2
 
 instance RyuFloat Double where
-  ryuB0 = const ryuDoubleB0
-  ryuB1 = const ryuDoubleB1
+  ryuMultiplier x = doubleTable (toInteger e2) where e2 = snd (decodeFloat x) - 2
 
-rebaseDecimal :: RyuFloat a => a -> DecimalFloat
+rebaseDecimal :: RyuFloat a => a -> RoundingMode -> DecimalFloat
 rebaseDecimal x = undefined
