@@ -1,5 +1,7 @@
 module Text.Format.Floating.Rounding where
 
+import Data.Bits (shiftR)
+
 {- | For a given float value, this algorithm will output a decimal representation
      anywhere in the interval with endpoints halfway between the next-smallest and
      next-largest representable value. These endpoints may or may not themselves
@@ -53,6 +55,9 @@ scaleInterval (a, b, c) s = (a * s, b * s, c * s)
 
 addIntervals :: FloatInterval -> FloatInterval -> FloatInterval
 addIntervals (a, b, c) (a', b', c') = (a + a', b + b', c + c')
+
+shiftIntervalRight :: FloatInterval -> Int -> FloatInterval
+shiftIntervalRight (a, b, c) s = (a `shiftR` s, b `shiftR` s, c `shiftR` s)
 
 intervalOf :: Integer -> FloatInterval
 intervalOf x = (x, x, x)

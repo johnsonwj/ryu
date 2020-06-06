@@ -45,3 +45,21 @@ convertToDecimal x rm
         else (e2, scaleInterval uvw (5 ^ abs e2))
 
     (d0, e0) = shortestDecimalRep a b c (acceptLowerBound rm mf s) (acceptUpperBound rm mf s) True
+
+shortestDecimalRep :: Integer -> Integer -> Integer -> Bool -> Bool -> Bool -> (Integer, Integer)
+shortestDecimalRep a0 b0 c0 acceptSmaller acceptLarger breakTieDown
+    = loop True True a0 b0 (if acceptLarger then c0 else c0 - 1) 0 0  where
+        loop az bz a b c digit i =
+            let a'            = a `div` 10
+                b'            = b `div` 10
+                c'            = c `div` 10
+                digit'        = b `mod` 10
+                adz           = a `mod` 10 == 0
+                az'           = az && adz
+                bz'           = bz && (digit == 0)
+                isTie         = digit == 5 && bz
+                wantRoundDown = digit < 5 || (isTie && breakTieDown)
+                roundDown     = (wantRoundDown && (a /= b || az)) || b + 1 > c
+            in  if a' < c' || (acceptSmaller && az')
+                then loop az' bz' a' b' c' digit' (i + 1)
+                else (if roundDown then b else b + 1, i)

@@ -1,6 +1,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Text.Format.Floating.Ryu.Tables.Formulas (multiplierTable) where
+module Text.Format.Floating.Ryu.Tables.Formulas
+  ( multiplierTable
+  , ryuQ
+  , ryuK0
+  , ryuK1
+  ) where
 
 import Data.Bits (shift)
 
@@ -39,7 +44,7 @@ e2Range _ = (e2min, e2max) where
 logTenTwo, logTwoFive, logTenFive :: Float
 logTenTwo   = logBase 10 2
 logTwoFive  = logBase 2 5
-logTenFive = logBase 10 5
+logTenFive  = logBase 10 5
 
 infixl 7 *.
 (*.) :: Integer -> Float -> Integer
