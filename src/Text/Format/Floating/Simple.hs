@@ -29,7 +29,7 @@ convertToDecimal :: (RealFloat a) => a -> RoundingMode -> DecimalFloat
 convertToDecimal x rm
     | isNaN x       = DecimalNaN mf
     | isInfinite x  = DecimalInfinity s
-    | otherwise     = DecimalFloat s d0 (e0 + e10)
+    | otherwise     = DecimalFloat s (e0 + e10) d0
   where
     (mf, ef) = decodeFloat x
     s = signum x < 0
