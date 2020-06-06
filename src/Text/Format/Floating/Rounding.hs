@@ -15,7 +15,7 @@ module Text.Format.Floating.Rounding where
      @RoundBigger@ and @RoundSmaller@ mean that a number exactly between two encoded
      float values would round to the one higher or lower /in absolute value/
      respectively. Thus the lower endpoint is valid (since it would round up), but
-     not the lower endpoint (since it would round to the next-higher machine
+     not the upper endpoint (since it would round to the next-higher machine
      float, not this one).
 
      @RoundUp@ means that a number exactly between two encoded float values would round
