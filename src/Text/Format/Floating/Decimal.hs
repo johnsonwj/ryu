@@ -61,12 +61,12 @@ renderSignedDecimalInteger s x = addSign (renderAbs x) where
 
 shortestDecimalRep :: Integer -> Integer -> Integer -> Bool -> Bool -> Bool -> (Integer, Integer)
 shortestDecimalRep a0 b0 c0 acceptSmaller acceptLarger breakTieDown
-    = go True True a0 b0 (if acceptLarger then c0 else c0 - 1) 0  where
-        go az bz a b c i =
+    = loop True True a0 b0 (if acceptLarger then c0 else c0 - 1) 0 0  where
+        loop az bz a b c digit i =
             let a'            = a `div` 10
                 b'            = b `div` 10
                 c'            = c `div` 10
-                digit         = b `mod` 10
+                digit'        = b `mod` 10
                 adz           = a `mod` 10 == 0
                 az'           = az && adz
                 bz'           = bz && (digit == 0)
@@ -74,5 +74,5 @@ shortestDecimalRep a0 b0 c0 acceptSmaller acceptLarger breakTieDown
                 wantRoundDown = digit < 5 || (isTie && breakTieDown)
                 roundDown     = (wantRoundDown && (a /= b || az)) || b + 1 > c
             in  if a' < c' || (acceptSmaller && az')
-                then go az' bz' a' b' c' (i + 1)
+                then loop az' bz' a' b' c' digit' (i + 1)
                 else (if roundDown then b else b + 1, i)
