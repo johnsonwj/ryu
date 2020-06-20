@@ -19,5 +19,5 @@ smallestNormalizedFloat = encodeFloat s e where
 ryuFloatB0, ryuFloatB1, ryuDoubleB0, ryuDoubleB1 :: Integer
 ryuFloatB0 = 59
 ryuFloatB1 = 61
-ryuDoubleB0 = 122
-ryuDoubleB1 = 121
+ryuDoubleB0 = 125
+ryuDoubleB1 = 125
