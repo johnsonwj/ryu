@@ -11,29 +11,55 @@ Performance is evaluated by generating a list of 1024 `Float`s (or `Double`s) an
 The results are reported in text form below (as copied from the terminal output from criterion), as well as in an [HTML report](./bench.html). Random numbers never behave the way they should, and floating-point encoding is contrary in its own way, so these were run until they gave numbers with low variance introduced by outliers. This isn't really all that necessary, since the means work out roughly the same anyway...but it makes the author feel better.
 
 ```
-benchmarking ryu/float
-time                 2.849 ms   (2.829 ms .. 2.868 ms)
-                     1.000 R²   (0.999 R² .. 1.000 R²)
-mean                 2.838 ms   (2.831 ms .. 2.845 ms)
-std dev              25.78 μs   (22.62 μs .. 29.59 μs)
+benchmarking float/ryu
+time                 2.853 ms   (2.828 ms .. 2.877 ms)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 2.847 ms   (2.839 ms .. 2.855 ms)
+std dev              27.97 μs   (25.18 μs .. 32.00 μs)
 
-benchmarking ryu/double
-time                 4.068 ms   (4.050 ms .. 4.082 ms)
+benchmarking float/simple
+time                 4.866 ms   (4.854 ms .. 4.878 ms)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 4.065 ms   (4.059 ms .. 4.069 ms)
-std dev              15.06 μs   (12.17 μs .. 19.01 μs)
+mean                 4.868 ms   (4.863 ms .. 4.873 ms)
+std dev              15.52 μs   (11.51 μs .. 21.25 μs)
 
-benchmarking simple/float
-time                 4.741 ms   (4.693 ms .. 4.778 ms)
-                     1.000 R²   (0.999 R² .. 1.000 R²)
-mean                 4.785 ms   (4.770 ms .. 4.810 ms)
-std dev              57.65 μs   (26.16 μs .. 119.2 μs)
+benchmarking float/show
+time                 1.413 ms   (1.392 ms .. 1.429 ms)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 1.393 ms   (1.389 ms .. 1.398 ms)
+std dev              15.48 μs   (8.521 μs .. 21.11 μs)
 
-benchmarking simple/double
-time                 11.00 ms   (10.86 ms .. 11.28 ms)
-                     0.999 R²   (0.997 R² .. 1.000 R²)
-mean                 10.91 ms   (10.88 ms .. 11.01 ms)
-std dev              129.9 μs   (11.80 μs .. 266.9 μs)
+benchmarking float/printf
+time                 1.661 ms   (1.655 ms .. 1.666 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.648 ms   (1.645 ms .. 1.651 ms)
+std dev              9.163 μs   (7.601 μs .. 11.61 μs)
+
+benchmarking double/ryu
+time                 3.839 ms   (3.820 ms .. 3.854 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 3.859 ms   (3.855 ms .. 3.871 ms)
+std dev              19.08 μs   (7.137 μs .. 37.43 μs)
+
+benchmarking double/simple
+time                 10.96 ms   (10.94 ms .. 11.00 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 10.98 ms   (10.97 ms .. 11.01 ms)
+std dev              40.30 μs   (12.29 μs .. 84.51 μs)
+
+benchmarking double/show
+time                 2.505 ms   (2.495 ms .. 2.512 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 2.493 ms   (2.490 ms .. 2.497 ms)
+std dev              9.825 μs   (7.745 μs .. 12.00 μs)
+
+benchmarking double/printf
+time                 2.729 ms   (2.717 ms .. 2.746 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 2.725 ms   (2.720 ms .. 2.731 ms)
+std dev              18.55 μs   (15.62 μs .. 23.56 μs)
 ```
 
 Using the lookup tables resulted in a 42% speedup for 32-bit floats, and a 63% speedup for 64-bit floats. These can be run locally with `stack run performance-tests -- --output bench.html`.
+
+Unfortunately even with the lookup tables, we cannot yet match `show` or `printf` from `base`. Presumably this will involve learning how to properly performance-tune the compiled code.

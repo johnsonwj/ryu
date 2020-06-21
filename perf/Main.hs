@@ -6,6 +6,7 @@ import Data.Text (Text)
 
 import qualified Text.Format.Floating.Ryu as Ryu
 import qualified Text.Format.Floating.Simple as Simple
+import Text.Printf
 
 main :: IO ()
 main = do
@@ -17,18 +18,26 @@ main = do
         doubles = take 1024 (randoms doubleGen :: [Double])
     
     defaultMain
-        [ bgroup "ryu"
-            [ bench "float" $ nf formatFloatsRyu floats
-            , bench "double" $ nf formatFloatsRyu doubles
-            ]
-        , bgroup "simple"
-            [ bench "float" $ nf formatFloatsSimple floats
-            , bench "double" $ nf formatFloatsSimple doubles
-            ]
+        [ bgroup "float" (benchAll floats)
+        , bgroup "double" (benchAll doubles)
         ]
+
+benchAll :: (Ryu.RyuFloat f, Show f, PrintfArg f) => [f] -> [Benchmark]
+benchAll fs =
+    [ bench "ryu" $ nf formatFloatsRyu fs
+    , bench "simple" $ nf formatFloatsSimple fs
+    , bench "show" $ nf formatFloatsShow fs
+    , bench "printf" $ nf formatFloatsPrintf fs
+    ]
 
 formatFloatsRyu :: Ryu.RyuFloat f => [f] -> [Text]
 formatFloatsRyu = map Ryu.formatDec
 
 formatFloatsSimple :: RealFloat f => [f] -> [Text]
 formatFloatsSimple = map Simple.formatDec
+
+formatFloatsShow :: Show f => [f] -> [String]
+formatFloatsShow = map show
+
+formatFloatsPrintf :: PrintfArg f => [f] -> [String]
+formatFloatsPrintf = map (printf "%f")
