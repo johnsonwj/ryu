@@ -45,13 +45,13 @@ class RealFloat a => RyuFloat a where
   ryuMultiplier :: a -> Integer
 
 instance RyuFloat Float where
-  ryuMultiplier = floatTable . ryuE2
+  ryuMultiplier = floatMultiplier . ryuE2
 
   ryuB0 _ = ryuFloatB0
   ryuB1 _ = ryuFloatB1
 
 instance RyuFloat Double where
-  ryuMultiplier = doubleTable . ryuE2
+  ryuMultiplier = doubleMultiplier . ryuE2
 
   ryuB0 _ = ryuDoubleB0
   ryuB1 _ = ryuDoubleB1

@@ -2,6 +2,7 @@
 
 module Text.Format.Floating.Ryu.Tables.Formulas
   ( multiplierTable
+  , e2Range
   , ryuQ
   , ryuK0
   , ryuK1
@@ -10,9 +11,10 @@ module Text.Format.Floating.Ryu.Tables.Formulas
 import Data.Bits (shiftR)
 
 multiplierTable :: forall a. RealFloat a => a -> Integer -> Integer -> [(Integer, Integer)]
-multiplierTable _ b0 b1 = map (\e2 -> (e2, multiplier e2 b0 b1)) e2s where
+multiplierTable _ b0 b1 = mappings where
   (e2lo, e2hi) = e2Range (undefined :: a)
   e2s = [e2lo .. e2hi]
+  mappings = map (\e2 -> (e2, multiplier e2 b0 b1)) e2s
 
 ryuQ :: Integer -> Integer
 ryuQ e2

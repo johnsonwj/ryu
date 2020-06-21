@@ -21,7 +21,7 @@ common build-opts
 library
   import:             build-opts
   hs-source-dirs:     src
-  build-depends:      base, text, template-haskell
+  build-depends:      base, text, template-haskell, array
   exposed-modules:    Text.Format.Floating.Ryu
                     , Text.Format.Floating.Simple
                     , Text.Format.Floating.Rounding

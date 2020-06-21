@@ -5,14 +5,11 @@ module Text.Format.Floating.Ryu.Tables.TH (makeLookupTable) where
 import Language.Haskell.TH
 
 import Control.Applicative (liftA2)
+import Data.Array (Array, array)
 
-makeLookupTable :: String -> [(Integer, Integer)] -> Q [Dec]
-makeLookupTable n ps = liftA2 (:) fnSig fnDec where
+makeLookupTable :: String -> (Integer, Integer) -> [(Integer, Integer)] -> Q [Dec]
+makeLookupTable n bounds mappings = liftA2 (:) fnSig fnDec where
   fnName        = mkName n
-  fnSig         = sigD fnName [t| Integer -> Integer |]
-  entryClauses  = makeLookupEntry <$> ps
-  fnEqns        = entryClauses ++ [clause [wildP] (normalB [| error "no entry defined" |]) []]
+  fnSig         = sigD fnName [t| Array Integer Integer |]
+  fnEqns        = [clause [] (normalB [| array bounds mappings |]) []]
   fnDec         = pure <$> funD fnName fnEqns
-
-makeLookupEntry :: (Integer, Integer) -> Q Clause
-makeLookupEntry (x, y) = clause [litP (IntegerL x)] (normalB . litE $ IntegerL y) []
