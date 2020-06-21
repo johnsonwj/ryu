@@ -25,6 +25,7 @@ library
   exposed-modules:    Text.Format.Floating.Ryu
                     , Text.Format.Floating.Simple
                     , Text.Format.Floating.Rounding
+                    , Text.Format.Floating.Ryu.Debug
   other-modules:      Text.Format.Floating.Constants
                     , Text.Format.Floating.Decimal
                     , Text.Format.Floating.Ryu.Tables
