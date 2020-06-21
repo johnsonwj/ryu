@@ -32,6 +32,12 @@ library
                     , Text.Format.Floating.Ryu.Tables.Formulas
                     , Text.Format.Floating.Ryu.Tables.TH
 
+executable performance-tests
+  import:             build-opts
+  hs-source-dirs:     perf
+  build-depends:      base, ryu, text, random, criterion
+  main-is:            Main.hs
+  ghc-options:        -O2
 
 test-suite tests
   import:               build-opts
