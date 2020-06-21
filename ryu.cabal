@@ -24,7 +24,6 @@ library
   build-depends:      base, text, template-haskell
   exposed-modules:    Text.Format.Floating.Ryu
                     , Text.Format.Floating.Simple
-                    , Text.Format.Floating.Hex
                     , Text.Format.Floating.Rounding
   other-modules:      Text.Format.Floating.Constants
                     , Text.Format.Floating.Decimal
