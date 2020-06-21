@@ -8,10 +8,10 @@ import Text.Format.Floating.Ryu.Tables.Formulas
 printTable :: String -> [(Integer, Integer)] -> IO ()
 printTable label table = do
     let fileName = "ryu_table_" ++ label ++ ".txt"
-        lines = (\(e2, m) -> printf "%8d  %8d  %8d  %32x" e2 (ryuQ e2) (-e2 - (ryuQ e2)) m) <$> table
+        tableLines = (\(e2, m) -> printf "%8d  %8d  %8d  %32x" e2 (ryuQ e2) (-e2 - (ryuQ e2)) m) <$> table
     h <- openFile fileName WriteMode
     hPutStrLn h (printf "%8s  %8s  %8s  %s" "e2" "q" "-e2 - q" "mult")
-    sequence_ (hPutStrLn h <$> lines)
+    sequence_ (hPutStrLn h <$> tableLines)
     hClose h
 
 -- does not evaluate its argument
