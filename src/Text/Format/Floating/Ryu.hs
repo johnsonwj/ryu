@@ -58,9 +58,11 @@ instance RyuFloat Double where
 
 convertToDecimal :: RyuFloat a => a -> RoundingMode -> DecimalFloat
 convertToDecimal x rm
-    | isNaN x       = DecimalNaN mf
-    | isInfinite x  = DecimalInfinity s
-    | otherwise     = DecimalFloat s (e0 + e10) d0
+    | isNaN x           = DecimalNaN mf
+    | isInfinite x      = DecimalInfinity s
+    | x == 0.0          = DecimalFloat False 0 0
+    | isNegativeZero x  = DecimalFloat True 0 0
+    | otherwise         = DecimalFloat s (e0 + e10) d0
   where
     mf = fst $ decodeFloat x
     e2 = ryuE2 x

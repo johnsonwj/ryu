@@ -27,9 +27,11 @@ formatSci' rm x = renderDecimalSci (convertToDecimal x rm)
 --   such that a = m10 * 10 ^ e10.
 convertToDecimal :: (RealFloat a) => a -> RoundingMode -> DecimalFloat
 convertToDecimal x rm
-    | isNaN x       = DecimalNaN mf
-    | isInfinite x  = DecimalInfinity s
-    | otherwise     = DecimalFloat s (e0 + e10) d0
+    | isNaN x           = DecimalNaN mf
+    | isInfinite x      = DecimalInfinity s
+    | x == 0.0          = DecimalFloat False 0 0
+    | isNegativeZero x  = DecimalFloat True 0 0
+    | otherwise         = DecimalFloat s (e0 + e10) d0
   where
     (mf, ef) = decodeFloat x
     s = signum x < 0
