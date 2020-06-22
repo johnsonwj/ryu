@@ -44,7 +44,7 @@ test-suite tests
   type:                 exitcode-stdio-1.0
   main-is:              Spec.hs
   hs-source-dirs:       test
-  build-depends:        base, hspec, ryu
+  build-depends:        base, hspec, ryu, QuickCheck, text
   build-tool-depends:   hspec-discover:hspec-discover
-  other-modules:          Text.Format.Floating.SimpleSpec
+  other-modules:          Text.Format.Floating.RyuSpec
   default-extensions:   OverloadedStrings

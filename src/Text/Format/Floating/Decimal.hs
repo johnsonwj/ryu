@@ -16,18 +16,22 @@ data DecimalFloat
   | DecimalFloat SignBit Integer Integer
   -- ^ DecimalFloat s e10 d10 represents the number @(-1)^s * d10 * 10^e10@ where @d10@ is the smallest possible of the range
   --   of real numbers that could be represented by the original (binary) encoding.
+  deriving (Show)
 
 renderDecimal :: DecimalFloat -> Text
 renderDecimal = doRender normalRenderDec where
   normalRenderDec s e d
     | e == 0  = T.append (renderSignedDecimalInteger s d) ".0"
     | e >  0  = T.concat [renderSignedDecimalInteger s d, T.replicate (fromInteger e) "0", ".0"]
-    | otherwise = let dr = renderSignedDecimalInteger s d
+    | otherwise = let dr = renderSignedDecimalInteger False d
                       dl = T.length dr
                       dd = dl + fromInteger e
                   in if dd <= 0
-                    then T.concat ["0.", T.replicate (abs dd) "0", dr]
-                    else let (w, f) = T.splitAt dd dr in T.concat [w, ".", f]
+                    then T.concat [signChar s, "0.", T.replicate (abs dd) "0", dr]
+                    else let (w, f) = T.splitAt dd dr in T.concat [signChar s, w, ".", f]
+
+  signChar True = "-"
+  signChar False = ""
 
 renderDecimalSci :: DecimalFloat -> Text
 renderDecimalSci = doRender normalRenderSci where
@@ -36,7 +40,7 @@ renderDecimalSci = doRender normalRenderSci where
     dh'       = if s then T.cons '-' dh else dh
     dt'       = if T.null dt then "0" else dt
     e'        = e + fromIntegral (T.length dt)
-    es        = if e' < 0 then "-" else "+"
+    es        = if e' < 0 then "-" else "" -- follow haskell convention where positive exponents do not have a +, as in 1.234e1
 
 type NonsingularRenderer = SignBit -> Integer -> Integer -> Text
 
